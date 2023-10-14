@@ -25,8 +25,10 @@ async function run() {
   try {
     // Connect the client to the server	(optional starting in v4.7)
     await client.connect();
-    const database = client.db("coffeeDB")
-    const coffeeCollection = database.collection("coffee")
+    const database = client.db("coffeeDB");
+    const coffeeCollection = database.collection("coffee");
+    // const userData = client.db('coffeeDB');
+    const userCollection = client.db('coffeeDB').collection('user')
 
     app.get('/coffee', async(req,res) => {
         const findCoffee = coffeeCollection.find();
@@ -41,26 +43,26 @@ async function run() {
         res.send(result);
     })
 
-app.post('/coffee', async(req,res) => {
-    const newCoffee = req.body;
-    console.log(newCoffee);
-    const result = await coffeeCollection.insertOne(newCoffee) ;
-    res.send(result)
-})
+  app.post('/coffee', async(req,res) => {
+      const newCoffee = req.body;
+      console.log(newCoffee);
+      const result = await coffeeCollection.insertOne(newCoffee) ;
+      res.send(result)
+  })
 
-app.put('/coffee/:id', async(req,res) => {
-    const id = req.params.id ;
-    const filter = {_id: new ObjectId(id)};
-    const options = {upsert:true};
-    const updatedCoffee = req.body ;
-    const coffee = {
+  app.put('/coffee/:id', async(req,res) => {
+      const id = req.params.id ;
+      const filter = {_id: new ObjectId(id)};
+      const options = {upsert:true};
+      const updatedCoffee = req.body ;
+      const coffee = {
         $set: {
             name:updatedCoffee.name,
             supplier:updatedCoffee.supplier,
             chef:updatedCoffee.chef,
             taste:updatedCoffee.taste,
             details:updatedCoffee.details,
-            photo:updatedCoffee.namphotoe,
+            photo:updatedCoffee.photo,
             category:updatedCoffee.category
         }
     }
@@ -75,6 +77,13 @@ app.delete('/coffee/:id', async(req,res) => {
     res.send(result);
 })
 
+// users related api 
+app.post('/user', async(req,res) => {
+  const user = req.body;
+  console.log(user);
+  const result = await userCollection.insertOne(user);
+  res.send(result)
+})
 
     // Send a ping to confirm a successful connection
     await client.db("admin").command({ ping: 1 });
